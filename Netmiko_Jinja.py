@@ -44,16 +44,13 @@ def After_Intermediate_Server_Login(ais_id,ais_ip,ais_name,ais_cfile):
     net_connect.write_channel('shebin')
     net_connect.write_channel('\n')
     redispatch(net_connect,device_type='cisco_ios')
-    console.print()
     console.print('[bold][blue] Connecting to device with Sol_Id-> [/bold][/blue]'+ais_id,style='bold purple')
     console.print('[bold][blue] Branch-> [/bold][/blue]'+ais_name,style='bold purple')
     console.print('[bold][blue] IP-> [/bold][/blue]'+ais_ip,style='bold purple')
     console.print(Panel('Connected ! :smiley: '),style='bold green')
     console.print(Panel('[yellow][bold]Pushing configuration to the device'))
-    time.sleep(0.5)
     net_connect.send_config_from_file(config_file=ais_cfile,enter_config_mode=True)
     console.print(Panel('Configuration Push Successfully !!!',style='bold green'))
-    console.print()
     table.add_row(ais_id,ais_ip,config_success)
 
                 
@@ -77,7 +74,7 @@ with alive_bar(num_rows-1 ,length=50) as bars:
             loop_ip     = row['Loopback_IP']
             lan_net     = row['Lan_Net']
             wild_card   = row['Wild_Card']
-            jump_server={'device_type':'terminal_server','ip':'192.168.4.133','username':'shebin','password':'shebin123','global_delay_factor':5}
+            jump_server={'device_type':'terminal_server','ip':'192.168.4.133','username':'shebin','password':'shebin123','global_delay_factor':1}
             
             config_str=''
 
@@ -98,7 +95,11 @@ with alive_bar(num_rows-1 ,length=50) as bars:
                 print('Op 1=',write_channel_op_1)
                 print('Op 2=',write_channel_op_2)
                 print('proompt_1=',prompt_find_1)
-                if 'No route to host' in  write_channel_op_2:
+                if ('No route to host') in  write_channel_op_2:
+                    Non_Connecting_Hosts(hname=branch_name,hid=sol_id)
+                    table.add_row(sol_id,branch_name,config_unsuccess)
+
+                elif ('Connection timed out') in write_channel_op_2:
                     Non_Connecting_Hosts(hname=branch_name,hid=sol_id)
                     table.add_row(sol_id,branch_name,config_unsuccess)
 
@@ -113,7 +114,7 @@ with alive_bar(num_rows-1 ,length=50) as bars:
                     else:
                         print("password failed")
     
-                elif 'Password:' in prompt_find_1:
+                elif (('Password:')or('PASSWORD:')or('password:')) in prompt_find_1:
                     print("in")
                     After_Intermediate_Server_Login(ais_cfile=config_push_file,ais_id=sol_id,ais_name=branch_name,ais_ip=lan_ip)
                     bars()
