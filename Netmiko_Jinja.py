@@ -120,11 +120,7 @@ with alive_bar(num_rows-1 ,length=50) as bars:
                     table.add_row(sol_id,branch_name,config_success)
 
                 else:
-<<<<<<< HEAD
-                    console.print("Error! Some other issues occured,Please Check...!",style='bold red')
-=======
                     console.print("[red][bold]Error ![/red][/bold] [bold][yellow] Sorry No 'Prompt' or the 'Pattern' matched")
->>>>>>> cleanup
                     bars()
                     table.add_row(sol_id,branch_name,config_unsuccess)
 
