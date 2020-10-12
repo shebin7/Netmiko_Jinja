@@ -88,14 +88,11 @@ with alive_bar(num_rows-1 ,length=50) as bars:
             try:
                 net_connect= ConnectHandler(**jump_server)
                 net_connect.write_channel('ssh shebin@'+row['Lan_IP'])
-                #net_connect.write_channel('\n')
                 write_channel_op_1=net_connect._read_channel_timing(delay_factor=1,max_loops=150)
                 write_channel_op_2=net_connect._read_channel_timing(delay_factor=1,max_loops=150)
                 prompt_find_1=net_connect.find_prompt()
-                print('Op 1=',write_channel_op_1)
-                print('Op 2=',write_channel_op_2)
-                print('proompt_1=',prompt_find_1)
-                if ('No route to host') in  write_channel_op_2:
+
+                if ('No route to host') in  write_channel_op_2:                    
                     Non_Connecting_Hosts(hname=branch_name,hid=sol_id)
                     table.add_row(sol_id,branch_name,config_unsuccess)
 
@@ -106,22 +103,22 @@ with alive_bar(num_rows-1 ,length=50) as bars:
                 elif (("Are")or('ARE')) in prompt_find_1:
                     net_connect.write_channel('yes')
                     prompt_find_2 = net_connect.find_prompt()
-                    print('channel2=',prompt_find_2)
+
                     if (('Password:')or('Password:')or('PASSWORD:')) in prompt_find_2:
                         After_Intermediate_Server_Login(ais_cfile=Final_config_str,ais_id=sol_id,ais_name=branch_name,ais_ip=lan_ip)
                         bars()
                         table.add_row(sol_id,branch_name,config_success)
+                    
                     else:
-                        print("password failed")
+                        console.print("[red][bold]Error ![/red][/bold] [bold][yellow]Got some other 'prompt' or the 'pattern' did not match")
     
                 elif (('Password:')or('PASSWORD:')or('password:')) in prompt_find_1:
-                    print("in")
                     After_Intermediate_Server_Login(ais_cfile=config_push_file,ais_id=sol_id,ais_name=branch_name,ais_ip=lan_ip)
                     bars()
                     table.add_row(sol_id,branch_name,config_success)
 
                 else:
-                    print("not moving inside are")
+                    console.print("[red][bold]Error ![/red][/bold] [bold][yellow] Sorry No 'Prompt' or the 'Pattern' matched")
                     bars()
                     table.add_row(sol_id,branch_name,config_unsuccess)
 
