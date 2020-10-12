@@ -9,16 +9,18 @@ from alive_progress import alive_bar
 import time
 from netmiko import redispatch
 
-
+### File Paths ###
 csv_file_branch_ip='/home/shebin/NETDEVOPS/Net_automation_Project/Netmiko_Projects/Netmiko_Jinja_Config_Push/branch_ip.csv'
 config_file_dir='/home/shebin/NETDEVOPS/Net_automation_Project/Netmiko_Projects/Netmiko_Jinja_Config_Push/'
 jinja_template_file='/home/shebin/NETDEVOPS/Net_automation_Project/Netmiko_Projects/Netmiko_Jinja_Config_Push/branch_temp.j2'
 
 
+### Count number of rows in csv file ###
 lines =open(csv_file_branch_ip)
 num_rows = len(lines.readlines())
 
 
+### Custom template maker for building configuration ###
 with open(jinja_template_file)as jinja_temp:
     template_read = Template(jinja_temp.read())
 
@@ -39,7 +41,7 @@ console.print('[bold]Starting with the Execution[/bold]',justify='center',style=
 console.print('[red][bold][blink] Caution[/red][/bold][/blink] - [red][bold] Do not press any key',justify='center')
 console.print()
 
-
+### Function for pushing Configuration File ###
 def After_Intermediate_Server_Login(ais_id,ais_ip,ais_name,ais_cfile):
     net_connect.write_channel('shebin')
     net_connect.write_channel('\n')
@@ -56,7 +58,7 @@ def After_Intermediate_Server_Login(ais_id,ais_ip,ais_name,ais_cfile):
                 
 
 
-
+### Function for storing Device details which we are not able to Connect ###
 def Non_Connecting_Hosts(hname,hid,):
     file = open('Log_file_device not configured','a+')
     file.write("Configuration not pushed in "+hname+'with ip address'+hid)
@@ -121,7 +123,7 @@ with alive_bar(num_rows-1 ,length=50) as bars:
                     table.add_row(sol_id,branch_name,config_success)
 
                 else:
-                    print("not moving inside are")
+                    console.print("Error! Some other issues occured,Please Check...!",style='bold red')
                     bars()
                     table.add_row(sol_id,branch_name,config_unsuccess)
 
